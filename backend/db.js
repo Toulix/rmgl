@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
-const dbUrl = process.env.DB_URL;
-
-const connect = async () => {
+const connect = async (dbUrl) => {
   await mongoose.connect(dbUrl, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
@@ -12,4 +10,4 @@ const connect = async () => {
 
 const close = () => mongoose.connection.close();
 
-module.exports = { connect, close, url: dbUrl };
+module.exports = { connect, close };

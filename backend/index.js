@@ -6,11 +6,12 @@ const db = require("./db");
 
 const port = process.env.PORT || 4000;
 
-db.connect().then(() => {
-    console.log("Connected to MongoDB: " + db.url);
-  }).catch(error => {
-    console.log('An error occured when connecting to mongoDB database', error)
-  });  
+db.connect("mongodb://localhost:27017/war")
+        .then(() => {
+            console.log("Connected to MongoDB...");
+        }).catch(error => {
+            console.log('An error occured when connecting to mongoDB database', error)
+        });  
 
 let warriors = [
  { id: '1', name: 'Merlin Gaulois', hp: 100, mp: 30, st: 40, type: 'Gaulois'  },
