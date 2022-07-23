@@ -8,6 +8,8 @@ const port = process.env.PORT || 4000;
 
 db.connect().then(() => {
     console.log("Connected to MongoDB: " + db.url);
+  }).catch(error => {
+    console.log('An error occured when connecting to mongoDB database', error)
   });  
 
 let warriors = [
