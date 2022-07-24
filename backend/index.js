@@ -5,6 +5,7 @@ const app = express();
 const db = require("./db");
 
 const models = require("./models");
+const typeDefs = require('./schema');
 
 const port = process.env.PORT || 4000;
 
@@ -16,42 +17,6 @@ db.connect("mongodb://localhost:27017/war")
         });  
 
 
-// Construct a schema, using GraphQL's schema language
-const typeDefs = gql`
-
-    type Warrior {
-        id: ID!
-        name: String!
-        hp: Int!
-        mp: Int!
-        st: Int!
-        type: String!
-        creator: String!
-    }
-
-    input WarriorInput {
-        name: String!
-        hp: Int!
-        mp: Int!
-        st: Int!
-        type: String!
-        creator: String!
-    }
-
-    type Query {
-        warriors: [Warrior!]!
-        getWarrior(id: ID!): Warrior!
-    }
-
-    type Mutation {
-        createWarrior(name: String!
-                    hp: Int!
-                    mp: Int!
-                    st: Int!
-                    type: String!
-                    creator: String!): Warrior!
-    }
-`;
 
 // Provide resolver functions for our schema fields
 const resolvers = {
