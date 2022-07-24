@@ -4,6 +4,8 @@ const app = express();
 
 const db = require("./db");
 
+const models = require("./models");
+
 const port = process.env.PORT || 4000;
 
 db.connect("mongodb://localhost:27017/war")
@@ -13,10 +15,6 @@ db.connect("mongodb://localhost:27017/war")
             console.log('An error occured when connecting to mongoDB database', error)
         });  
 
-let warriors = [
- { id: '1', name: 'Merlin Gaulois', hp: 100, mp: 30, st: 40, type: 'Gaulois'  },
- { id: '2', name: 'Jacques Roumain', hp: 100, mp: 30, st: 60, type: 'Roumain'  },
-];
 
 // Construct a schema, using GraphQL's schema language
 const typeDefs = gql`
@@ -46,7 +44,12 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        createWarrior(warriorInput: WarriorInput!): Warrior!
+        createWarrior(name: String!
+                    hp: Int!
+                    mp: Int!
+                    st: Int!
+                    type: String!
+                    creator: String!): Warrior!
     }
 `;
 
@@ -54,25 +57,24 @@ const typeDefs = gql`
 const resolvers = {
 
     Query: {
-        warriors: () => warriors,
-        getWarrior: (parent,args) => warriors.find(warrior => warrior.id == args.id)
+        warriors: async () => await models.Warrior.find(),
+        getWarrior: async (parent,args) => await models.Warrior.findById(args.id)
     },
 
     Mutation: {
-        createWarrior: (parent, args) => {
-            let warrior = {
-                id: warriors.length + 1,
-                name: args.name,
-                hp: args.hp,
-                mp: args.mp,
-                st: args.st,
-                type: args.type,
-                creator: args.creator
-            };
+        createWarrior: async (parent, args) => {
 
-            warriors.push(warrior);
+        const { name, hp, mp, st, type, creator } = args;
 
-            return warrior;
+        return await models.Warrior
+                           .create({
+                                name,
+                                hp,
+                                mp,
+                                st,
+                                type,
+                                creator                                      
+                            });
         }
     }
 };
