@@ -28,7 +28,8 @@ const Warrior = mongoose.model('Warrior', new mongoose.Schema({
         enum: ['Gaulois', 'Roumain']
     },
     creator: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     }
 

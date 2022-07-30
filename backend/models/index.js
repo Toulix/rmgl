@@ -1,7 +1,9 @@
 const Warrior = require('./warrior');
+const User = require('./user');
 
 const models = {
-    Warrior
+    Warrior,
+    User
 };
 
 module.exports = models;
