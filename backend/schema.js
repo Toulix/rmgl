@@ -32,6 +32,6 @@ module.exports = gql`
         curseGauloisWarrior(idRoumain: ID!, idGaulois: ID!): Warrior!
         curseRomainWarrior(idGaulois: ID!, idRoumain: ID!): Warrior!
         signUp(username: String!, email: String!, password: String!): String!
-        signIn(email: String, password: String!): String!
+        signIn(email: String!, password: String!): String!
     }
 `;
