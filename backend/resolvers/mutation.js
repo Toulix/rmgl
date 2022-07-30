@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {
@@ -8,20 +9,26 @@ const {
 const jwt_secret = process.env.JWT_SECRET || 'warrior';
 
 module.exports = {
-        // createWarrior: async (parent, args, { models }) => {
+        createWarrior: async (parent, args, { models, user }) => {
 
-        // const { name, hp, mp, st, type, creator } = args;
+        // if there is no user on the context, throw an authentication error
+        if (!user) {
+          throw new AuthenticationError('You must be signed in to create a warrior');
+        }
 
-        // return await models.Warrior
-        //                    .create({
-        //                         name,
-        //                         hp,
-        //                         mp,
-        //                         st,
-        //                         type,
-        //                         creator                                      
-        //                     });
-        // },
+        const { name, hp, mp, st, type } = args;
+
+        return await models.Warrior
+                           .create({
+                                name,
+                                hp,
+                                mp,
+                                st,
+                                type,
+                                // reference the creator's mongo id
+                                creator: mongoose.Types.ObjectId(user.id)                                        
+                            });
+        },
 
 //      * Roumain
 //              * Frapper (button)
