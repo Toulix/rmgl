@@ -30,16 +30,8 @@ module.exports = gql`
     }
 
     type Mutation {
-        hitGauloisWarrior(idRoumain: ID!, idGaulois: ID!): Warrior!
-        hitRomainWarrior(idGaulois: ID!, idRoumain: ID!): Warrior!
-
         hitWarrior(idWarrior: ID!): Warrior!
-
-        curseGauloisWarrior(idRoumain: ID!, idGaulois: ID!): Warrior!
-        curseRomainWarrior(idGaulois: ID!, idRoumain: ID!): Warrior!
-
         curseWarrior(idWarrior: ID!): Warrior!
-
         signUp(username: String!,
                email: String!,
                password: String!,

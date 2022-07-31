@@ -12,7 +12,7 @@ module.exports = {
 
       // hitWarrior(idWarrior: ID!): Warrior!
 
-      hitWarrior: async (parent, args, { models, user }) => {
+      hitWarrior: async (parent, {idWarrior}, { models, user }) => {
 
         if(!user)
            throw new AuthenticationError('You must be signed in to perform this operation');
@@ -24,38 +24,91 @@ module.exports = {
                  throw new Error('User not found');
             }
                                        
-        const warrior = await models.Warrior.findOne({ creator: user.id});
+        const myWarrior = await models.Warrior.findOne({ creator: user.id});
 
-        if (!warrior) {
+          if (!myWarrior) {
                throw new Error('Warrior not found for the current user');
-         }
+          }
+
+         let hittedWarrior = await models.Warrior.findOne({ _id: idWarrior});
+          
+         if (!hittedWarrior) {
+            throw new Error('Hitted warrior not found');
+          }
+
+         if(myWarrior.type == hittedWarrior.type)
+              throw new Error('Cannot hit warrior of the same type');
+          
+         if(hittedWarrior.hp == 0)
+              throw new Error('Cannot hit dead warrior');
+
+        const diffHp = hittedWarrior.hp - myWarrior.st;
+        const finalHp = diffHp < 0 ? 0 : diffHp;
+
+        return await models.Warrior.findOneAndUpdate(
+                {
+                  _id: hittedWarrior.id,
+                },
+                {
+                 $set: {
+                   hp: finalHp
+                  }
+                },
+                {
+                 new: true
+                });
       
       },
-        // createWarrior: async (parent, args, { models, user }) => {
 
-        // // if there is no user on the context, throw an authentication error
-        // if (!user) {
-        //   throw new AuthenticationError('You must be signed in to create a warrior');
-        // }
+      curseWarrior: async (parent, { idWarrior }, { models, user }) => {
 
-        // const { name, hp, mp, st, type } = args;
+        if(!user)
+           throw new AuthenticationError('You must be signed in to perform this operation');
 
-        // return await models.Warrior
-        //                    .create({
-        //                         name,
-        //                         hp,
-        //                         mp,
-        //                         st,
-        //                         type,
-        //                         // reference the creator's mongo id
-        //                         creator: mongoose.Types.ObjectId(user.id)                                        
-        //                     });
-        // },
+        const fetchedUser = await models.User.findOne({_id: user.id})
+                                             .populate('warrior');
+        
+        if (!fetchedUser) {
+                 throw new Error('User not found');
+            }
+                                       
+        const myWarrior = await models.Warrior.findOne({ creator: user.id});
 
-//      * Roumain
-//              * Frapper (button)
-//                      * Action: HP (Gaulois) = HP (Gaulois) - ST (Romain)
+          if (!myWarrior) {
+               throw new Error('Warrior not found for the current user');
+          }
 
+         let cursedWarrior = await models.Warrior.findOne({ _id: idWarrior});
+    
+         if (!cursedWarrior) {
+            throw new Error('Cursed warrior not found');
+          }
+
+         if(myWarrior.type == cursedWarrior.type)
+              throw new Error('Cannot curse warrior of the same type');
+          
+         if(cursedWarrior.hp == 0)
+              throw new Error('Cannot curse dead warrior');
+
+        const diffHp = cursedWarrior.hp - myWarrior.mp;
+
+        const finalHp = diffHp < 0 ? 0 : diffHp;
+
+        return await models.Warrior.findOneAndUpdate(
+                {
+                  _id: cursedWarrior.id,
+                },
+                {
+                 $set: {
+                   hp: finalHp
+                  }
+                },
+                {
+                 new: true
+                });
+      
+      },
+        
         hitGauloisWarrior: async (parent, {idRoumain, idGaulois }, { models }) => {
         
            const roumain =  await models.Warrior.find({ _id: idRoumain, type: 'Roumain' });
@@ -76,58 +129,6 @@ module.exports = {
                 
            }
         },
-
-//      * Roumain
-//              * Lancer sort (button)
-//                      * Action: HP (Gaulois) = HP (Gaulois) - MP (Romain)
-
-        curseGauloisWarrior: async (parent, {idRoumain, idGaulois }, { models }) => {
-        
-        const roumain =  await models.Warrior.find({ _id: idRoumain, type: 'Roumain' });
-             
-        if(roumain) {
-             return await models.Warrior.findOneAndUpdate(
-                     {
-                       _id: idGaulois,
-                     },
-                     {
-                      $set: {
-                        hp: hp - roumain.mp
-                       }
-                     },
-                     {
-                      new: true
-                     });
-        }
-     },
-
-//      Gaulois:
-//      * Frapper (button)
-//              * Action: HP (Romain) = HP (Romain) - ST (Gaulois)
-
-       hitRomainWarrior:  async (parent, {idGaulois, idRomain }, { models }) => {
-        
-        const gaulois =  await models.Warrior.find({ _id: idGaulois, type: 'Gaulois' });
-             
-        if(gaulois) {
-             return await models.Warrior.findOneAndUpdate(
-                     {
-                       _id: idRomain,
-                     },
-                     {
-                      $set: {
-                        hp: hp - gaulois.st
-                       }
-                     },
-                     {
-                      new: true
-                     });
-        }
-     },
-
-//      Gaulois:
-//      * Lancer sort (button)
-//              * Action: HP (Romain) = HP (Romain) - MP (Gaulois)
 
         curseRomainWarrior: async (parent, {idGaulois, idRomain }, { models }) => {
         
