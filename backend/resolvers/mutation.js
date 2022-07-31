@@ -6,6 +6,8 @@ const {
         ForbiddenError
         } = require('apollo-server-express');
 
+const { pubsub, WARRIOR_HITTED } = require('../constant');
+
 const jwt_secret = process.env.JWT_SECRET || 'warrior';
 
 module.exports = {
@@ -45,18 +47,24 @@ module.exports = {
         const diffHp = hittedWarrior.hp - myWarrior.st;
         const finalHp = diffHp < 0 ? 0 : diffHp;
 
-        return await models.Warrior.findOneAndUpdate(
-                {
-                  _id: hittedWarrior.id,
-                },
-                {
-                 $set: {
-                   hp: finalHp
-                  }
-                },
-                {
-                 new: true
-                });
+        const updatedHitWarrior =  await models.Warrior.findOneAndUpdate(
+                                                {
+                                                  _id: hittedWarrior.id,
+                                                },
+                                                {
+                                                  $set: {
+                                                    hp: finalHp
+                                                    }
+                                                },
+                                                {
+                                                  new: true
+                                                });
+
+          pubsub.publish(WARRIOR_HITTED, {
+            warriorHitted: updatedHitWarrior
+          })
+          
+          return updatedHitWarrior;
       
       },
 
@@ -94,7 +102,7 @@ module.exports = {
 
         const finalHp = diffHp < 0 ? 0 : diffHp;
 
-        return await models.Warrior.findOneAndUpdate(
+        const updatedHitWarrior = await models.Warrior.findOneAndUpdate(
                 {
                   _id: cursedWarrior.id,
                 },
@@ -106,50 +114,15 @@ module.exports = {
                 {
                  new: true
                 });
+
+
+          pubsub.publish(WARRIOR_HITTED, {
+            warriorHitted: updatedHitWarrior
+          })
+          
+          return updatedHitWarrior;
       
       },
-        
-        hitGauloisWarrior: async (parent, {idRoumain, idGaulois }, { models }) => {
-        
-           const roumain =  await models.Warrior.find({ _id: idRoumain, type: 'Roumain' });
-                
-           if(roumain) {
-                return await models.Warrior.findOneAndUpdate(
-                        {
-                          _id: idGaulois,
-                        },
-                        {
-                         $set: {
-                           hp: hp - roumain.st
-                          }
-                        },
-                        {
-                         new: true
-                        });
-                
-           }
-        },
-
-        curseRomainWarrior: async (parent, {idGaulois, idRomain }, { models }) => {
-        
-                const gaulois =  await models.Warrior.find({ _id: idGaulois, type: 'Gaulois' });
-                
-                if(gaulois) {
-                return await models.Warrior.findOneAndUpdate(
-                        {
-                          _id: idRomain,
-                        },
-                        {
-                        $set: {
-                          hp: hp - gaulois.mp
-                        }
-                        },
-                        {
-                          new: true
-                        });
-        }
-     },
-
 
      signUp: async (parent, args , { models }) => {
 

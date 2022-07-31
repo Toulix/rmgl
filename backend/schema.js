@@ -29,6 +29,10 @@ module.exports = gql`
         me: User!
     }
 
+    type Subscription {
+        warriorHitted: Warrior!
+    }
+
     type Mutation {
         hitWarrior(idWarrior: ID!): Warrior!
         curseWarrior(idWarrior: ID!): Warrior!

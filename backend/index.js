@@ -1,17 +1,23 @@
+const { createServer } = require('http');
+const { ApolloServerPluginDrainHttpServer }  = require('apollo-server-core');
+const { makeExecutableSchema }  = require('@graphql-tools/schema');
+const { WebSocketServer }  = require('ws');
+const { useServer }  = require('graphql-ws/lib/use/ws');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
+const db = require("./db");
+const models = require("./models");
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
 const jwt = require('jsonwebtoken');
 const app = express();
 
-const db = require("./db");
 
-const models = require("./models");
+const httpServer = createServer(app);
 
-const typeDefs = require('./schema');
-
-const resolvers = require('./resolvers');
 
 const port = process.env.PORT || 4000;
+const wsport = process.env.WS_PORT || 4001;
 
 const jwt_secret = process.env.JWT_SECRET || 'warrior';
 
@@ -33,7 +39,21 @@ db.connect("mongodb://localhost:27017/war")
             console.log("Connected to MongoDB...");
         }).catch(error => {
             console.log('An error occured when connecting to mongoDB database', error)
-        });  
+        });
+
+// Creating the WebSocket server
+const wsServer = new WebSocketServer({
+    // This is the `httpServer` we created in a previous step.
+    server: httpServer,
+    // Pass a different path here if your ApolloServer serves at
+    // a different path.
+    path: '/graphql',
+  });
+
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+  // Hand in the schema we just created and have the
+  // WebSocketServer start listening.
+const serverCleanup = useServer({ schema }, wsServer);
 
 async function startApolloServer(typeDefs, resolvers){
     
@@ -41,6 +61,8 @@ async function startApolloServer(typeDefs, resolvers){
     const server = new ApolloServer({
         typeDefs,
         resolvers,
+        csrfPrevention: true,
+        cache: "bounded",
         context: ({req}) => {
             
         // get the user token from the headers
@@ -51,8 +73,26 @@ async function startApolloServer(typeDefs, resolvers){
         
         // Add the db models to the context
             return { models, user};
-            }
-    })
+        },
+        
+        plugins: [
+                // Proper shutdown for the HTTP server.
+                ApolloServerPluginDrainHttpServer({ httpServer }),
+          
+                // Proper shutdown for the WebSocket server.
+                {
+                  async serverWillStart() {
+                    return {
+                      async drainServer() {
+                        await serverCleanup.dispose();
+                      },
+                    };
+                  },
+                },
+              ],
+
+    
+    });
 
     await server.start();
 
@@ -61,7 +101,11 @@ async function startApolloServer(typeDefs, resolvers){
     
     app.listen({port}, () => {
     console.log(`GraphQL Server running at http://localhost:${port}${server.graphqlPath}`);
-})
-}
+    });
+
+    httpServer.listen(wsport, () => {
+        console.log(`Subscription Server running at ws://localhost:${wsport}${server.graphqlPath}`);
+    });
+};
 
 startApolloServer(typeDefs, resolvers);
