@@ -18,7 +18,7 @@ module.exports = gql`
         id: ID!
         username: String!
         email: String!
-        warriors: [Warrior!]!
+        warrior: Warrior
     }
 
     type Query {
@@ -32,9 +32,24 @@ module.exports = gql`
     type Mutation {
         hitGauloisWarrior(idRoumain: ID!, idGaulois: ID!): Warrior!
         hitRomainWarrior(idGaulois: ID!, idRoumain: ID!): Warrior!
+
+        hitWarrior(idWarrior: ID!): Warrior!
+
         curseGauloisWarrior(idRoumain: ID!, idGaulois: ID!): Warrior!
         curseRomainWarrior(idGaulois: ID!, idRoumain: ID!): Warrior!
-        signUp(username: String!, email: String!, password: String!): String!
+
+        curseWarrior(idWarrior: ID!): Warrior!
+
+        signUp(username: String!,
+               email: String!,
+               password: String!,
+               warriorName: String!,
+               warriorHp: Int!,
+               warriorMp: Int!,
+               warriorSt: Int!,
+               warriorType: String!,
+               ): String!
+
         signIn(email: String!, password: String!): String!
     }
 `;

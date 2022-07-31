@@ -11,7 +11,7 @@ module.exports = {
                             .populate('creator')
                         },
     
-    user: async (parent, { username }, { models }) => {
+    user: async (parent, { username }, { models, user }) => {
         // find a user given their username
             return await models.User.findOne({ username });
            },

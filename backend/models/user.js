@@ -15,6 +15,10 @@ const UserSchema = new mongoose.Schema(
     password: {
         type: String,
         required: true
+    },
+    warrior: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Warrior'
     }
   });
 

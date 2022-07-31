@@ -30,7 +30,8 @@ const Warrior = mongoose.model('Warrior', new mongoose.Schema({
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
+        unique: true
     }
 
 }));

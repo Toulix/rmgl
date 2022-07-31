@@ -9,26 +9,48 @@ const {
 const jwt_secret = process.env.JWT_SECRET || 'warrior';
 
 module.exports = {
-        createWarrior: async (parent, args, { models, user }) => {
 
-        // if there is no user on the context, throw an authentication error
-        if (!user) {
-          throw new AuthenticationError('You must be signed in to create a warrior');
-        }
+      // hitWarrior(idWarrior: ID!): Warrior!
 
-        const { name, hp, mp, st, type } = args;
+      hitWarrior: async (parent, args, { models, user }) => {
 
-        return await models.Warrior
-                           .create({
-                                name,
-                                hp,
-                                mp,
-                                st,
-                                type,
-                                // reference the creator's mongo id
-                                creator: mongoose.Types.ObjectId(user.id)                                        
-                            });
-        },
+        if(!user)
+           throw new AuthenticationError('You must be signed in to perform this operation');
+
+        const fetchedUser = await models.User.findOne({_id: user.id})
+                                             .populate('warrior');
+        
+        if (!fetchedUser) {
+                 throw new Error('User not found');
+            }
+                                       
+        const warrior = await models.Warrior.findOne({ creator: user.id});
+
+        if (!warrior) {
+               throw new Error('Warrior not found for the current user');
+         }
+      
+      },
+        // createWarrior: async (parent, args, { models, user }) => {
+
+        // // if there is no user on the context, throw an authentication error
+        // if (!user) {
+        //   throw new AuthenticationError('You must be signed in to create a warrior');
+        // }
+
+        // const { name, hp, mp, st, type } = args;
+
+        // return await models.Warrior
+        //                    .create({
+        //                         name,
+        //                         hp,
+        //                         mp,
+        //                         st,
+        //                         type,
+        //                         // reference the creator's mongo id
+        //                         creator: mongoose.Types.ObjectId(user.id)                                        
+        //                     });
+        // },
 
 //      * Roumain
 //              * Frapper (button)
@@ -51,6 +73,7 @@ module.exports = {
                         {
                          new: true
                         });
+                
            }
         },
 
@@ -126,18 +149,41 @@ module.exports = {
         }
      },
 
-     signUp: async (parent, { username, email, password }, { models }) => {
-        // normalize email address
-        email = email.trim().toLowerCase();
+
+     signUp: async (parent, args , { models }) => {
+
+        const {username,
+               email, 
+               password, 
+               warriorName, 
+               warriorHp,
+               warriorMp,
+               warriorSt, 
+               warriorType }  = args;
+
+  
         // hash the password
         const hashed = await bcrypt.hash(password, 10);
 
         try {
-           const user = await models.User.create({
-                username,
-                email,
-                password: hashed
-                });
+            const user = await models.User.create({
+                                                username,
+                                                email: email.trim().toLowerCase(),
+                                                password: hashed
+                                                });
+            
+            if(!user) throw new Error('Error creating the user');
+
+            const warrior = await models.Warrior.create({
+                                                        name: warriorName,
+                                                        hp: warriorHp,
+                                                        mp: warriorMp,
+                                                        st: warriorSt,
+                                                        type: warriorType,
+                                                        // reference the creator's mongo id
+                                                        creator: mongoose.Types.ObjectId(user.id)                                        
+                                                    });
+                
         // create and return the json web token
                 return jwt.sign({ id: user._id }, jwt_secret);
         } catch (err) {
