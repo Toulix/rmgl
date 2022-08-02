@@ -100,7 +100,7 @@ async function startApolloServer(typeDefs, resolvers){
     server.applyMiddleware({app, path: '/graphql'});
     
     app.listen({port}, () => {
-    console.log(`GraphQL Server running at http://localhost:${port}${server.graphqlPath}`);
+        console.log(`GraphQL Server running at http://localhost:${port}${server.graphqlPath}`);
     });
 
     httpServer.listen(wsport, () => {
