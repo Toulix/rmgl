@@ -1,48 +1,51 @@
-# Teste de compétence - Développeur full stack js
-Le but de ce test est de tester les compétences du candidat en développement full stack web javascript.
+# Développeur full stack js
 
-## Sujet
-Créer une application en temps réel qui enregistre les données de combat entre un Romain et un Gaulois en respectant les indications suivantes.
+The purpose of this test is to test the candidate's skills in full stack javascript web development.
 
-### Indication
-a) Pouvoir se connecter avec deux utilisateurs différents
+## Topic
 
-b) Pouvoir créer des combattants ( Gaulois, Romain ...) avec ces données à sauvegarder (chaque utilisateur pouvant créer les combattants):
-- ``Nom``
-- ``HP`` ( initial value = 100)
-- ``MP`` ( initial value = 30 // editable et max value = 100)
-- ``ST`` (initial value = 40 // editable et max value = 100)
+Create a real-time application that records combat data between a Roman and a Gaul respecting the following indications
 
-c) Pouvoir choisir un combattant pour chaque utilisateur
+### Indications
 
-d) Créer une page avec deux boutons suivant les combattants pour jouer le combat:
+a) Being able to connect with two different users
 
-Gaulois:
-* Frapper (button)
-	* Action: HP (Romain) = HP (Romain) - ST (Gaulois)
-* Lancer sort (button)
-	* Action: HP (Romain) = HP (Romain) - MP (Gaulois)
+b) Being able to create fighters (Gauls, Romans...) with these data to save (each user can create fighters):
 
-Romain:
-* Frapper (button)
-	* Action: HP (Gaulois) = HP (Gaulois) - ST (Romain)
-* Lancer sort (button)
-	* Action: HP (Gaulois) = HP (Gaulois) - MP (Romain)
+- `Nom`
+- `HP` ( initial value = 100)
+- `MP` ( initial value = 30 // editable and max value = 100)
+- `ST` (initial value = 40 // editable and max value = 100)
 
-c) Durant le combat si le HP est < 0, afficher le gagnant.
+c) Being able to choose a fighter for each user
 
-> **Note:** La saisie sur formulaire et l'affichage peuvent être séparés par page.
-> L'API créée utilisera le query language **GraphQL** sur la plateforme **Node.js** couplé au framework **VueJS**
-> Le combat devrait être en temps réel
+d) create a page with 2 buttons depending on the type of the fighters:
+
+if the fighter is of type Gauls:
+
+- Hit (button)
+  - Action: HP (Romans) = HP (Romans) - ST (Gauls)
+- Curse (button)
+  - Action: HP (Romans) = HP (Romans) - MP (Gauls)
+
+if the fighter is of type Romans:
+
+- Hit (button)
+  - Action: HP (Gauls) = HP (Gauls) - ST (Romans)
+- Curse (button)
+  - Action: HP (Gauls) = HP (Gauls) - MP (Romans)
+
+c) During the fight if HP is < 0, display the winners.
+
+> **Note:** filling out forms can be done in a separate page
+> the API should use the **GraphQL** query language with **Node.js** coupled with **VueJS**
+> The fight should be in real time
 
 ## Spec technique
-* Bdd: ``Mysql``, ou ``MongoDB``;
-* API Back-end: ``GrahQL``, ``Node.js``;
-* API Front-end: ``VueJS``;
-* Codage: ``javascript``;
-* Project repository: ``Gitlab``;
-* Workflow: Utiliser le système de commit et branche ``Git`` avec des pull request pour publier les changements.
-* Dockeriser l'application
 
-## Indication
-Ne vous inquiétez pas si vous ne pouvez pas tout faire, faites de votre mieux :). Nous préférons de petits changements très propres et utiles plutôt que beaucoup de changements inachevés.
+- Bdd: `Mysql`, or `MongoDB`;
+- API Back-end: `GrahQL`, `Node.js`;
+- API Front-end: `VueJS`;
+- language: `javascript`;
+- Project repository: `Gitlab`;
+- Dockeriser l'application
