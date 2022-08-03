@@ -2,7 +2,6 @@
 import NavBar from "@/components/NavBar.vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { getUsers } from "../../Services/UserService";
-import gql from 'graphql-tag';
 
 export default {
   components: {
@@ -15,27 +14,18 @@ export default {
     return {
       email: "",
       password: "",
-      users: null
+     isvalid: true
     };
   },
-  apollo: {
-    // Simple query that will update the 'hello' vue property
-    users: gql`query {
-      users {
-        data {
-          id
-          name
-          email
-        }
-      }
-    }`,
-  },
   mounted(){
-    getUsers()
+    // getUsers()
   },
   methods: {
+    hasErrors (errors) {
+      return Object.keys(errors).length > 0;
+    },
     onSubmit(values) {
-      console.log("submitted", values);
+     
     },
     validateEmail(value) {
       // if the field is empty
@@ -47,16 +37,17 @@ export default {
       if (!regex.test(value)) {
         return "This field must be a valid email";
       }
-      // All is good
+      // All is 
       return true;
     },
     validatePassword(value) {
       if (!value) {
         return "Password field is required";
       }
+      if(this.email !== '') this.isvalid = true; 
       return true;
     },
-  },
+  }
 };
 </script>
 
@@ -66,6 +57,7 @@ export default {
     <div class="w-full max-w-xs">
       <Form
         @submit="onSubmit"
+        v-slot="{ errors }"
         class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
         <div class="mb-4">
@@ -103,9 +95,8 @@ export default {
         </div>
         <div class="flex items-center justify-center">
           <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
-          >
+            class="bg-blue-500 disabled hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit" :class="{'bg-blue-200 hover:bg-blue-100  cursor-not-allowed': hasErrors(errors) }">
             Se connecter
           </button>
         </div>

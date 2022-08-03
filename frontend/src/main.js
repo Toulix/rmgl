@@ -14,7 +14,6 @@ registerGlobalFieldValidationRules();
 const app = createApp(App);
 app.use(Vuelidate);
 app.use(router);
-app.use(apolloProvider);
 
 
 app.mount("#app");
