@@ -54,6 +54,7 @@ export default {
       if (!value) {
         return "Password field is required";
       }
+      return true;
     },
   },
 };

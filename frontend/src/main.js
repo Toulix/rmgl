@@ -6,19 +6,10 @@ import router from "./router";
 import "./assets/main.css";
 import Vuelidate from "vuelidate";
 
-import { ApolloClient, InMemoryCache } from '@apollo/client/core'
-import { createApolloProvider } from '@vue/apollo-option'
+import registerGlobalFieldValidationRules from "./validator";
 
-const cache = new InMemoryCache()
 
-const apolloClient = new ApolloClient({
-  cache,
-  uri: 'http://laravel-graphql.test/graphql',
-})
-
-const apolloProvider = createApolloProvider({
-  defaultClient: apolloClient,
-})
+registerGlobalFieldValidationRules();
 
 const app = createApp(App);
 app.use(Vuelidate);
