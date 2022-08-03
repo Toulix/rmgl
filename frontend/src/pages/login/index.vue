@@ -1,28 +1,24 @@
-<script>
-import NavBar from "@/components/NavBar.vue";
-import { required, email, minLength } from "vuelidate/lib/validators";
+<script setup>
+import { reactive } from 'vue';
+import NavBar from '../../components/NavBar.vue';
 
-export default {
-  components: {
-    NavBar,
-  },
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  validations: {
-    email: { required, email },
-    password: { required, minLength: minLength(8) },
-  },
-};
+const state = reactive({
+      email: '',
+      phone: '',
+    })
+    const rules = {
+      contact: {
+        email: { required, email } // Matches state.contact.email
+      }
+    }
+
+    const v$ = useVuelidate(rules, state)
+
 </script>
-
 <template>
   <NavBar />
   <div class="w-full max-w-xs">
-    <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form class="bg-white w-1/3 mx-auto shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
           Email
