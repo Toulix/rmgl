@@ -8,10 +8,16 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
+    "@vue/apollo-option": "^4.0.0-alpha.20",
+    "apollo-boost": "^0.4.9",
     "axios": "^0.27.2",
+    "graphql": "^15.8.0",
+    "graphql-tag": "^2.12.6",
     "pinia": "^2.0.16",
     "vee-validate": "^4.6.2",
     "vue": "^3.2.37",
+    "vue-apollo": "^3.1.0",
     "vue-router": "^4.1.2",
     "vuelidate": "^0.7.7"
   },

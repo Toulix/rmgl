@@ -1,6 +1,8 @@
 <script>
 import NavBar from "@/components/NavBar.vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
+import { getUsers } from "../../Services/UserService";
+import gql from 'graphql-tag';
 
 export default {
   components: {
@@ -13,7 +15,23 @@ export default {
     return {
       email: "",
       password: "",
+      users: null
     };
+  },
+  apollo: {
+    // Simple query that will update the 'hello' vue property
+    users: gql`query {
+      users {
+        data {
+          id
+          name
+          email
+        }
+      }
+    }`,
+  },
+  mounted(){
+    getUsers()
   },
   methods: {
     onSubmit(values) {
@@ -41,7 +59,6 @@ export default {
 };
 </script>
 
-</script>
 <template>
   <NavBar />
   <div class="grid h-screen place-items-center">
